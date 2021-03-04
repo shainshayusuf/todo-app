@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:todolist_app/model.dart';
+import 'package:todolist_app/widgets/TodoItem.dart';
+import 'package:todolist_app/model.dart';
+import 'dart:core';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,30 +13,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController _titleController;
+ TextEditingController _titleController;
   TextEditingController _descController;
-  Map<String, String> _events;
+  List<Todo> notes = List<Todo>();
+  List<dynamic> stringList = List<dynamic>();
   SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
-    _events = {};
     _titleController = TextEditingController();
-     _descController = TextEditingController();
-     initPrefs();
+    _descController = TextEditingController();
+    initPrefs();
   }
 
   initPrefs() async {
     prefs = await SharedPreferences.getInstance();
-    // setState(() {
-    //   _events = Map<String, String>.from(
-    //       decodeMap(json.decode(prefs.getString("todos") ?? "{}")));
-    // });
-    print(json.decode(prefs.getString('todos')));
+    stringList = jsonDecode(prefs.getString("notes"));
+    stringList.forEach((element) {
+      notes.add(Todo.fromJson(element));
+    });
+    
   }
 
-   Map<String, String> encodeMap(Map<String, String> map) {
+  Map<String, String> encodeMap(Map<String, String> map) {
     Map<String, String> newMap = {};
     map.forEach((key, value) {
       newMap[key.toString()] = map[key];
@@ -53,13 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Todolist App'),
       ),
-      // body: Container(
-      //   child:Column(children: [
-      //    ..._events.values.map((event) => ListTile(
-      //       title: Text(User.fromJson(jsonDecode(event[0])).toString()),
-      //     ))
-      //   ],)
-      // ),
+      body:_buildList(notes),
       floatingActionButton: FloatingActionButton(
         onPressed:_showAddDialog,
         child: Icon(Icons.add),
@@ -68,12 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     
   }
-  _showAddDialog() async { 
+   _showAddDialog() async {
     await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content:Container(height: 250.0,
-            child: new Column(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Container(
+          height: 250.0,
+          child: new Column(
             children: <Widget>[
               new TextField(
                 controller: _titleController,
@@ -81,38 +81,64 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: new InputDecoration(
                     labelText: 'Todo title', hintText: 'eg. Meeting'),
               ),
-               new TextField(
-                 autofocus: true,
-                 controller: _descController,
-                 maxLines: 8,
-                 decoration: new InputDecoration(
-                     labelText: 'Todo Description', hintText: 'eg. About Todo'),
-               )
+              new TextField(
+                autofocus: true,
+                controller: _descController,
+                maxLines: 8,
+                decoration: new InputDecoration(
+                    labelText: 'Todo Description', hintText: 'eg. About Todo'),
+              )
             ],
-        ),
           ),
-          actions: <Widget>[
-            RaisedButton(
-              child: Text("Save"),
-              //  if (_titleController.text.isEmpty && _descController.text.isEmpty) return;
-              onPressed: () {
-               // print({'title':_titleController.text,'description':_descController.text});
-                if (_events[_titleController.text] != null) {
-                  _events[_titleController.text]=_descController.text;
-                } else {
-                  _events[_titleController.text] = _descController.text;
-                }
-                // _events[_titleController.text]
-                //       .add({'title':_titleController.text,'description':_descController.text});
-                print(_events);
-                 prefs.setString("todos", json.encode(encodeMap(_events)));
-                 print(prefs.getString('todos'));
-                Navigator.pop(context);
+        ),
+        actions: <Widget>[
+          RaisedButton(
+            child: Text("Save"),
+            onPressed: () {
+              if (_titleController.text != null &&
+                  _titleController.text != "" &&
+                  _descController.text != null &&
+                  _descController.text != "") {
+                Todo note = Todo(
+                    title: _titleController.text,
+                    desc: _descController.text,complete: false);
+                notes.add(note);
+                String jsonNotes = jsonEncode(notes);
+                print(jsonNotes);
+                prefs.setString("notes", jsonNotes);
                 _titleController.clear();
-              },
-            )
-          ],
-        ));
+                _descController.clear();
+              }
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
     
   }
+
+
+ListView _buildList(List<Todo> todoList) {
+  //   List todos = [];
+  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
+  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
+  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
+
+    return ListView.builder(
+      
+      itemCount: todoList.length,
+      itemBuilder: (BuildContext context, int index) {
+        final todo = todoList[index];
+        print(todo);
+
+        return TodoItem(
+          todo: todo,
+          onDismissed: (direction) {
+            print('dismissed');
+          },
+        );
+      }
+    );
 }
