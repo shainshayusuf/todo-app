@@ -32,7 +32,7 @@ class _TodoItemState extends State<TodoItem> {
       key: Key(widget.todo.title),
       onDismissed: widget.onDismissed,
       background: Container(color: Colors.red),
-          child: ListTile(
+      child: ListTile(
         onTap: widget.onTap,
         leading: Checkbox(
           value: widget.todo.complete,
@@ -43,13 +43,13 @@ class _TodoItemState extends State<TodoItem> {
           style: Theme.of(context).textTheme.title,
         ),
         subtitle: Text(
-          widget.todo.desc ,
+          widget.todo.desc,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.subhead,
         ),
         trailing: Wrap(
-          spacing: -10,// space between two icons
+          spacing: -10, // space between two icons
           children: <Widget>[
             IconButton(
               iconSize: 15.0,
@@ -60,7 +60,7 @@ class _TodoItemState extends State<TodoItem> {
             ), // icon-1
 
             IconButton(
-              iconSize: 15.0,
+                iconSize: 15.0,
                 icon: Icon(Icons.notification_important),
                 onPressed: () {
                   _notificationTimeString =
@@ -111,8 +111,8 @@ class _TodoItemState extends State<TodoItem> {
                                 SizedBox(height: 10.0),
                                 Text(
                                   'Click on above text to change time',
-                                  style:
-                                      TextStyle(fontSize: 15, letterSpacing: 2.0),
+                                  style: TextStyle(
+                                      fontSize: 15, letterSpacing: 2.0),
                                 ),
                                 SizedBox(height: 20.0),
                                 FloatingActionButton.extended(
@@ -132,8 +132,8 @@ class _TodoItemState extends State<TodoItem> {
         ),
       ),
     );
-    
   }
+
   Future<void> scheduleNotification() async {
     var scheduledNotificationDateTime = _notificationTime;
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -152,7 +152,6 @@ class _TodoItemState extends State<TodoItem> {
         widget.todo.title,
         scheduledNotificationDateTime,
         platformChannelSpecifics);
-        Navigator.pop(context);
+    Navigator.pop(context);
   }
-  
 }

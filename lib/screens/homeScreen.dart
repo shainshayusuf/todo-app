@@ -5,6 +5,9 @@ import 'dart:convert';
 import 'package:todolist_app/model.dart';
 import 'package:todolist_app/widgets/TodoItem.dart';
 import 'dart:core';
+import 'package:todolist_app/screens/detailScreen.dart';
+
+enum VisibilityFilter { all, completed, active }
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Todo> notes = List<Todo>();
   List<dynamic> stringList = List<dynamic>();
   SharedPreferences prefs;
+  int initialValue = 0;
 
   @override
   void initState() {
@@ -129,6 +133,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
               String jsonNotes = jsonEncode(notes);
               prefs.setString("notes", jsonNotes);
+            },
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) {
+                  return DetailScreen(
+                    todo: todo,
+                  );
+                },
+              ),);
             },
             onCheckboxChanged: (complete) {
               var changeIndex = notes.indexOf(todo);
