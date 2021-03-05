@@ -135,13 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
               prefs.setString("notes", jsonNotes);
             },
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) {
-                  return DetailScreen(
-                    todo: todo,
-                  );
-                },
-              ),);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return DetailScreen(
+                      todo: todo,
+                    );
+                  },
+                ),
+              );
             },
             onCheckboxChanged: (complete) {
               var changeIndex = notes.indexOf(todo);

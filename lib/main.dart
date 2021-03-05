@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_app/routes.dart';
+import 'package:todolist_app/screens/detailScreen.dart';
 import 'package:todolist_app/screens/homeScreen.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -14,14 +16,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ArchSampleTheme.theme,
       routes: {
-          AppRoutes.home: (context) => HomeScreen(),
-          // AppRoutes.addTodo: (context) => LoginScreen(),
-          
-        },
+        AppRoutes.home: (context) => HomeScreen(),
+      },
     );
   }
 }
-
 
 class ArchSampleTheme {
   static ThemeData get theme {
@@ -43,8 +42,6 @@ class ArchSampleTheme {
         contentTextStyle: body1,
         actionTextColor: Colors.cyan[300],
       ),
-      
     );
   }
 }
-
