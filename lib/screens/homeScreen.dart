@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todolist_app/main.dart';
 import 'dart:convert';
 import 'package:todolist_app/model.dart';
 import 'package:todolist_app/widgets/TodoItem.dart';
-import 'package:todolist_app/model.dart';
 import 'dart:core';
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- TextEditingController _titleController;
+  TextEditingController _titleController;
   TextEditingController _descController;
   List<Todo> notes = List<Todo>();
   List<dynamic> stringList = List<dynamic>();
@@ -30,26 +29,13 @@ class _HomeScreenState extends State<HomeScreen> {
   initPrefs() async {
     prefs = await SharedPreferences.getInstance();
     stringList = jsonDecode(prefs.getString("notes"));
-    stringList.forEach((element) {
-      notes.add(Todo.fromJson(element));
-    });
-    
-  }
-
-  Map<String, String> encodeMap(Map<String, String> map) {
-    Map<String, String> newMap = {};
-    map.forEach((key, value) {
-      newMap[key.toString()] = map[key];
-    });
-    return newMap;
-  }
-
-  Map<String, String> decodeMap(Map<String, String> map) {
-    Map<String, String> newMap = {};
-    map.forEach((key, value) {
-      newMap[key.toString()] = map[key];
-    });
-    return newMap;
+    if (stringList != null) {
+      setState(() {
+        stringList.forEach((element) {
+          notes.add(Todo.fromJson(element));
+        });
+      });
+    }
   }
 
   @override
@@ -58,16 +44,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Todolist App'),
       ),
-      body:_buildList(notes),
+      body: notes.length == 0
+          ? Center(
+              child: Text("No Todos,Add to remember task",
+                  style: TextStyle(fontSize: 20, letterSpacing: 1.0)))
+          : _buildList(notes),
       floatingActionButton: FloatingActionButton(
-        onPressed:_showAddDialog,
+        onPressed: _showAddDialog,
         child: Icon(Icons.add),
         tooltip: 'Add Todo',
       ),
     );
-    
   }
-   _showAddDialog() async {
+
+  _showAddDialog() async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -93,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: <Widget>[
           RaisedButton(
+            color: ArchSampleTheme.theme.copyWith().accentColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ),
             child: Text("Save"),
             onPressed: () {
               if (_titleController.text != null &&
@@ -101,7 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _descController.text != "") {
                 Todo note = Todo(
                     title: _titleController.text,
-                    desc: _descController.text,complete: false);
+                    desc: _descController.text,
+                    complete: false);
                 notes.add(note);
                 String jsonNotes = jsonEncode(notes);
                 print(jsonNotes);
@@ -115,10 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+    setState(() {
+      notes = notes;
+    });
   }
-    
-  }
-
+}
 
 ListView _buildList(List<Todo> todoList) {
   //   List todos = [];
@@ -126,19 +122,15 @@ ListView _buildList(List<Todo> todoList) {
   // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
   // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
 
-    return ListView.builder(
-      
+  return ListView.builder(
       itemCount: todoList.length,
       itemBuilder: (BuildContext context, int index) {
         final todo = todoList[index];
-        print(todo);
-
         return TodoItem(
           todo: todo,
           onDismissed: (direction) {
             print('dismissed');
           },
         );
-      }
-    );
+      });
 }
