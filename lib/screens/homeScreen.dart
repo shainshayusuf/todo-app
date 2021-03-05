@@ -99,7 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     complete: false);
                 notes.add(note);
                 String jsonNotes = jsonEncode(notes);
-                print(jsonNotes);
                 prefs.setString("notes", jsonNotes);
                 _titleController.clear();
                 _descController.clear();
@@ -114,23 +113,46 @@ class _HomeScreenState extends State<HomeScreen> {
       notes = notes;
     });
   }
-}
 
-ListView _buildList(List<Todo> todoList) {
-  //   List todos = [];
-  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
-  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
-  // todos.add(Todo(title:'Jack', desc:"Jack",complete:true));
+  ListView _buildList(List<Todo> todoList) {
+    return ListView.builder(
+        itemCount: todoList.length,
+        itemBuilder: (BuildContext context, int index) {
+          final todo = todoList[index];
+          return TodoItem(
+            todo: todo,
+            onDismissed: (direction) {
+              setState(() {
+                notes.removeAt(index);
+              });
+              _showUndoSnackbar(context, todo);
 
-  return ListView.builder(
-      itemCount: todoList.length,
-      itemBuilder: (BuildContext context, int index) {
-        final todo = todoList[index];
-        return TodoItem(
-          todo: todo,
-          onDismissed: (direction) {
-            print('dismissed');
-          },
-        );
-      });
+              String jsonNotes = jsonEncode(notes);
+              prefs.setString("notes", jsonNotes);
+            },
+            onCheckboxChanged: (complete) {
+              var changeIndex = notes.indexOf(todo);
+              notes[changeIndex].complete = !todo.complete;
+              String jsonNotes = jsonEncode(notes);
+              prefs.setString("notes", jsonNotes);
+              setState(() {
+                notes = notes;
+              });
+            },
+          );
+        });
+  }
+
+  void _showUndoSnackbar(BuildContext context, Todo todo) {
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text(
+          'Deleted "' + todo.title + '"',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
 }

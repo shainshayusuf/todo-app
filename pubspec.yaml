@@ -31,8 +31,8 @@ dependencies:
   shared_preferences: 0.5.12+4
   intl: ^0.16.1
   share: 0.6.5+4
-  flutter_local_notifications: ^4.0.1+1
-  flutter_native_timezone: ^1.0.4
+  flutter_local_notifications: ^1.4.4+2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
