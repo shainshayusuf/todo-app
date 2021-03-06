@@ -4,6 +4,7 @@ import 'package:share/share.dart';
 import 'package:todolist_app/model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:math';
 
 class TodoItem extends StatefulWidget {
   final DismissDirectionCallback onDismissed;
@@ -26,6 +27,8 @@ class _TodoItemState extends State<TodoItem> {
   String _notificationTimeString;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+      Random random = new Random();
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -40,13 +43,13 @@ class _TodoItemState extends State<TodoItem> {
         ),
         title: Text(
           widget.todo.title,
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
           widget.todo.desc,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         trailing: Wrap(
           spacing: -10, // space between two icons
@@ -147,7 +150,7 @@ class _TodoItemState extends State<TodoItem> {
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
-        0,
+        random.nextInt(100),
         'Reminder',
         widget.todo.title,
         scheduledNotificationDateTime,

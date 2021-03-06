@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_app/routes.dart';
-import 'package:todolist_app/screens/detailScreen.dart';
 import 'package:todolist_app/screens/homeScreen.dart';
 
 void main() {
@@ -26,7 +25,7 @@ class ArchSampleTheme {
   static ThemeData get theme {
     final themeData = ThemeData.dark();
     final textTheme = themeData.textTheme;
-    final body1 = textTheme.body1.copyWith(decorationColor: Colors.transparent);
+    final body1 = textTheme.bodyText2.copyWith(decorationColor: Colors.transparent);
 
     return ThemeData.dark().copyWith(
       primaryColor: Colors.grey[800],
