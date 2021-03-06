@@ -58,13 +58,13 @@ class _TodoItemState extends State<TodoItem> {
               iconSize: 15.0,
               icon: Icon(Icons.share),
               onPressed: () {
-                Share.share(widget.todo.desc, subject: 'Look what I made!');
+                Share.share(widget.todo.desc, subject: 'About Todo');
               },
             ), // icon-1
 
             IconButton(
                 iconSize: 15.0,
-                icon: Icon(Icons.notification_important),
+                icon: Icon(Icons.notifications),
                 onPressed: () {
                   _notificationTimeString =
                       DateFormat('HH:mm').format(DateTime.now());
